@@ -44,6 +44,18 @@ a {
   color: inherit;
 }
 
+.sr-only-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .app-shell {
   position: relative;
   min-height: 100vh;
@@ -217,6 +229,143 @@ a {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+}
+
+.intake-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.seed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.field-stack {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.text-input {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  border-radius: 0.7rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-strong);
+  padding: 0.62rem 0.75rem;
+  font: inherit;
+}
+
+.text-input:focus-visible {
+  outline: 2px solid rgba(2, 132, 199, 0.35);
+  outline-offset: 1px;
+}
+
+.text-input--error {
+  border-color: rgba(244, 63, 94, 0.35);
+  background: rgba(255, 241, 242, 0.55);
+}
+
+.field-help {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.field-help--error {
+  color: #be123c;
+}
+
+.upload-dropzone {
+  position: relative;
+  display: grid;
+  gap: 0.25rem;
+  border-radius: 0.9rem;
+  border: 1px dashed rgba(2, 132, 199, 0.32);
+  background: linear-gradient(180deg, rgba(240, 249, 255, 0.8), rgba(255, 255, 255, 0.75));
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.upload-dropzone:hover {
+  border-color: rgba(2, 132, 199, 0.45);
+}
+
+.upload-dropzone__title {
+  font-weight: 700;
+}
+
+.upload-dropzone__hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.list-stack {
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.list-row strong {
+  display: block;
+}
+
+.list-row__meta {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.checklist__item {
+  position: relative;
+  padding-left: 1.35rem;
+  color: var(--text-muted);
+}
+
+.checklist__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.45);
+}
+
+.checklist__item--done {
+  color: #0f172a;
+}
+
+.checklist__item--done::before {
+  background: linear-gradient(180deg, #22c55e, #16a34a);
 }
 
 .card {
@@ -593,6 +742,15 @@ a {
 
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .seed-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .list-row {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
