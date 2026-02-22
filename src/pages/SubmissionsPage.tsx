@@ -3,7 +3,12 @@ import { Button, Card, CardHeader } from '@/components/ui';
 import { useCommunityRecord } from '@/hooks';
 import { useAppStore, useSelectedCommunityId } from '@/store';
 import { formatBytes, formatUtcDateTime } from '@/utils/format';
-import { buildSubmissionBundleSummary, canTransitionSubmissionStatus, getSubmissionNextStatuses } from '@/features/submissions';
+import {
+  buildSubmissionBundleSummary,
+  canTransitionSubmissionStatus,
+  diffSubmissionVersions,
+  getSubmissionNextStatuses,
+} from '@/features/submissions';
 import type { SubmissionStatus } from '@/domain/types';
 
 export function SubmissionsPage() {
@@ -11,7 +16,12 @@ export function SubmissionsPage() {
   const { status, data, error, refetch } = useCommunityRecord(selectedCommunityId);
   const selectedSubmissionVersionId = useAppStore((state) => state.selectedSubmissionVersionId);
   const setSelectedSubmissionVersionId = useAppStore((state) => state.setSelectedSubmissionVersionId);
+  const compareSubmissionBaseId = useAppStore((state) => state.compareSubmissionBaseId);
+  const compareSubmissionTargetId = useAppStore((state) => state.compareSubmissionTargetId);
+  const setSubmissionComparePair = useAppStore((state) => state.setSubmissionComparePair);
   const [statusOverrides, setStatusOverrides] = useState<Record<string, SubmissionStatus>>({});
+  const [checklistOverrides, setChecklistOverrides] = useState<Record<string, Record<string, boolean>>>({});
+  const [noteDraft, setNoteDraft] = useState('');
 
   useEffect(() => {
     if (!data || data.submissions.length === 0) return;
@@ -27,6 +37,30 @@ export function SubmissionsPage() {
     if (!selectedSubmissionVersionId) return data.submissions[0] ?? null;
     return data.submissions.find((submission) => submission.id === selectedSubmissionVersionId) ?? null;
   }, [data, selectedSubmissionVersionId]);
+
+  const submissions = data?.submissions ?? [];
+
+  useEffect(() => {
+    if (submissions.length === 0) return;
+
+    const defaultTarget =
+      compareSubmissionTargetId && submissions.some((s) => s.id === compareSubmissionTargetId)
+        ? compareSubmissionTargetId
+        : submissions[0]?.id ?? null;
+    const defaultBase =
+      compareSubmissionBaseId && submissions.some((s) => s.id === compareSubmissionBaseId)
+        ? compareSubmissionBaseId
+        : submissions[1]?.id ?? submissions[0]?.id ?? null;
+
+    if (defaultBase !== compareSubmissionBaseId || defaultTarget !== compareSubmissionTargetId) {
+      setSubmissionComparePair(defaultBase, defaultTarget);
+    }
+  }, [
+    compareSubmissionBaseId,
+    compareSubmissionTargetId,
+    setSubmissionComparePair,
+    submissions,
+  ]);
 
   if (status === 'loading' || status === 'idle') {
     return (
@@ -57,7 +91,6 @@ export function SubmissionsPage() {
   }
 
   const record = data;
-  const submissions = record.submissions;
 
   if (submissions.length === 0) {
     return (
@@ -76,11 +109,40 @@ export function SubmissionsPage() {
   const effectiveStatus = statusOverrides[submission.id] ?? submission.status;
   const bundle = buildSubmissionBundleSummary(record, submission);
   const nextStatuses = getSubmissionNextStatuses(effectiveStatus);
+  const effectiveChecklist = submission.checklist.map((item) => ({
+    ...item,
+    done: checklistOverrides[submission.id]?.[item.id] ?? item.done,
+  }));
+
+  const compareBase = submissions.find((item) => item.id === compareSubmissionBaseId) ?? null;
+  const compareTarget = submissions.find((item) => item.id === compareSubmissionTargetId) ?? null;
+  const diffSummary =
+    compareBase && compareTarget ? diffSubmissionVersions(compareBase, compareTarget) : null;
 
   function handleStatusChange(nextStatus: SubmissionStatus) {
     if (!canTransitionSubmissionStatus(effectiveStatus, nextStatus)) return;
     setStatusOverrides((current) => ({ ...current, [submission.id]: nextStatus }));
   }
+
+  function toggleChecklistItem(itemId: string) {
+    setChecklistOverrides((current) => {
+      const currentSubmission = current[submission.id] ?? {};
+      const baseline = submission.checklist.find((item) => item.id === itemId)?.done ?? false;
+      const currentValue = currentSubmission[itemId] ?? baseline;
+
+      return {
+        ...current,
+        [submission.id]: {
+          ...currentSubmission,
+          [itemId]: !currentValue,
+        },
+      };
+    });
+  }
+
+  const notes = noteDraft.trim()
+    ? [...submission.notes, `[Draft note] ${noteDraft.trim()}`]
+    : submission.notes;
 
   return (
     <div className="page-stack">
@@ -108,7 +170,7 @@ export function SubmissionsPage() {
                       <strong>{item.phaseLabel} {item.versionLabel}</strong>
                       <span className="list-row__meta">{formatUtcDateTime(item.createdAtIso)} UTC</span>
                       <span className="list-row__meta">
-                        {item.changedRoads.length} roads · {item.changedLots.length} lots
+                        {item.changedRoads.length} roads | {item.changedLots.length} lots
                       </span>
                     </button>
                   </li>
@@ -141,7 +203,7 @@ export function SubmissionsPage() {
               <Card>
                 <CardHeader
                   title="Status Workflow"
-                  subtitle="Draft → Submitted → Accepted/Rejected → Live"
+                  subtitle="Draft -> Submitted -> Accepted/Rejected -> Live"
                 />
                 <div className="status-flow">
                   <p className="field-help">
@@ -191,6 +253,154 @@ export function SubmissionsPage() {
                   <dd>{submission.changedLots.join(', ') || '--'}</dd>
                 </div>
               </div>
+            </Card>
+
+            <div className="two-col">
+              <Card>
+                <CardHeader
+                  title="Version Diff"
+                  subtitle="Compare what changed between submission versions."
+                />
+                <div className="seed-grid">
+                  <div className="field-stack">
+                    <label className="field-label" htmlFor="compare-base">
+                      Base version
+                    </label>
+                    <select
+                      id="compare-base"
+                      className="text-input"
+                      value={compareBase?.id ?? ''}
+                      onChange={(event) =>
+                        setSubmissionComparePair(
+                          event.currentTarget.value || null,
+                          compareTarget?.id ?? submission.id,
+                        )
+                      }
+                    >
+                      {submissions.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.phaseLabel} {item.versionLabel}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="field-stack">
+                    <label className="field-label" htmlFor="compare-target">
+                      Target version
+                    </label>
+                    <select
+                      id="compare-target"
+                      className="text-input"
+                      value={compareTarget?.id ?? ''}
+                      onChange={(event) =>
+                        setSubmissionComparePair(
+                          compareBase?.id ?? submissions[0]?.id ?? null,
+                          event.currentTarget.value || null,
+                        )
+                      }
+                    >
+                      {submissions.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.phaseLabel} {item.versionLabel}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {diffSummary ? (
+                  <div className="diff-grid">
+                    <div className="detail-chip">
+                      <span>Added roads</span>
+                      <strong>{diffSummary.addedRoads.join(', ') || '--'}</strong>
+                    </div>
+                    <div className="detail-chip">
+                      <span>Removed roads</span>
+                      <strong>{diffSummary.removedRoads.join(', ') || '--'}</strong>
+                    </div>
+                    <div className="detail-chip">
+                      <span>Added lots</span>
+                      <strong>{diffSummary.addedLots.join(', ') || '--'}</strong>
+                    </div>
+                    <div className="detail-chip">
+                      <span>Removed lots</span>
+                      <strong>{diffSummary.removedLots.join(', ') || '--'}</strong>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="muted">Select two versions to compare.</p>
+                )}
+              </Card>
+
+              <Card>
+                <CardHeader
+                  title="Review Checklist + Notes"
+                  subtitle="Internal checklist and note capture before/after submission."
+                />
+                <ul className="checklist">
+                  {effectiveChecklist.map((item) => (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        className="checklist-toggle"
+                        onClick={() => toggleChecklistItem(item.id)}
+                        aria-pressed={item.done}
+                      >
+                        <span
+                          className={
+                            item.done
+                              ? 'checklist__item checklist__item--done'
+                              : 'checklist__item'
+                          }
+                        >
+                          {item.label}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <div className="field-stack">
+                  <label className="field-label" htmlFor="submission-note-draft">
+                    Draft note (local)
+                  </label>
+                  <textarea
+                    id="submission-note-draft"
+                    className="text-input textarea-input"
+                    value={noteDraft}
+                    onChange={(event) => setNoteDraft(event.currentTarget.value)}
+                    rows={3}
+                    placeholder="Add reviewer note..."
+                  />
+                </div>
+                <ul className="list-stack">
+                  {notes.map((note, index) => (
+                    <li key={`${submission.id}-note-${index}`} className="list-row">
+                      <span>
+                        <strong>Note {index + 1}</strong>
+                        <span className="list-row__meta">{note}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader title="Audit Trail" subtitle="Status changes, notes, and bundle generation events." />
+              <ol className="timeline-list">
+                {submission.auditTrail.map((event) => (
+                  <li key={event.id} className="timeline-list__item">
+                    <div className="timeline-list__dot" aria-hidden="true" />
+                    <div>
+                      <p className="timeline-list__headline">{event.type.replace('-', ' ')}</p>
+                      <p className="timeline-list__text">{event.message}</p>
+                      <p className="timeline-list__meta">
+                        {event.actor} | {formatUtcDateTime(event.atIso)} UTC
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
             </Card>
           </div>
         </div>
