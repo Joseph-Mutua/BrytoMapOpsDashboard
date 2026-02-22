@@ -3,7 +3,7 @@ import { Card, CardHeader, Button } from '@/components/ui';
 import { useCommunityRecord } from '@/hooks';
 import { useAppStore, useEffectiveIntakeDraft, useSelectedCommunityId } from '@/store';
 import { formatBytes, formatUtcDateTime } from '@/utils/format';
-import { validateIntakeBasics } from '@/features/intake';
+import { GeoreferenceEditor, validateIntakeBasics } from '@/features/intake';
 
 export function IntakePage() {
   const selectedCommunityId = useSelectedCommunityId();
@@ -11,6 +11,7 @@ export function IntakePage() {
   const effectiveDraft = useEffectiveIntakeDraft(status === 'success' ? data : null);
   const setNearestAddressOverride = useAppStore((state) => state.setNearestAddressOverride);
   const setSeedCoordinatesOverride = useAppStore((state) => state.setSeedCoordinatesOverride);
+  const setControlPointsOverride = useAppStore((state) => state.setControlPointsOverride);
   const resetIntakeOverrides = useAppStore((state) => state.resetIntakeOverrides);
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
 
@@ -219,6 +220,12 @@ export function IntakePage() {
           </p>
         </Card>
       </div>
+
+      <GeoreferenceEditor
+        record={record}
+        controlPoints={draft.controlPoints}
+        onChangeControlPoints={(points) => setControlPointsOverride(record.summary.id, points)}
+      />
     </div>
   );
 }
