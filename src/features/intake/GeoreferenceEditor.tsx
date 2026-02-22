@@ -138,7 +138,10 @@ export function GeoreferenceEditor({
                 .filter(Boolean)
                 .join(' ')}
               value={draft.label}
-              onChange={(event) => setDraft((state) => ({ ...state, label: event.currentTarget.value }))}
+              onChange={(event) => {
+                const { value } = event.currentTarget;
+                setDraft((state) => ({ ...state, label: value }));
+              }}
               placeholder="NW corner"
             />
           </div>
@@ -150,12 +153,13 @@ export function GeoreferenceEditor({
               id="cp-confidence"
               className="text-input"
               value={draft.confidence}
-              onChange={(event) =>
+              onChange={(event) => {
+                const { value } = event.currentTarget;
                 setDraft((state) => ({
                   ...state,
-                  confidence: event.currentTarget.value as PlatControlPoint['confidence'],
-                }))
-              }
+                  confidence: value as PlatControlPoint['confidence'],
+                }));
+              }}
             >
               <option value="high">High</option>
               <option value="medium">Medium</option>
@@ -173,7 +177,10 @@ export function GeoreferenceEditor({
               id="cp-source-x"
               className="text-input"
               value={draft.sourceX}
-              onChange={(event) => setDraft((state) => ({ ...state, sourceX: event.currentTarget.value }))}
+              onChange={(event) => {
+                const { value } = event.currentTarget;
+                setDraft((state) => ({ ...state, sourceX: value }));
+              }}
               placeholder="48"
             />
           </div>
@@ -185,7 +192,10 @@ export function GeoreferenceEditor({
               id="cp-source-y"
               className="text-input"
               value={draft.sourceY}
-              onChange={(event) => setDraft((state) => ({ ...state, sourceY: event.currentTarget.value }))}
+              onChange={(event) => {
+                const { value } = event.currentTarget;
+                setDraft((state) => ({ ...state, sourceY: value }));
+              }}
               placeholder="62"
             />
           </div>
@@ -200,7 +210,10 @@ export function GeoreferenceEditor({
               id="cp-lat"
               className="text-input"
               value={draft.worldLat}
-              onChange={(event) => setDraft((state) => ({ ...state, worldLat: event.currentTarget.value }))}
+              onChange={(event) => {
+                const { value } = event.currentTarget;
+                setDraft((state) => ({ ...state, worldLat: value }));
+              }}
               placeholder="30.68612"
             />
           </div>
@@ -212,7 +225,10 @@ export function GeoreferenceEditor({
               id="cp-lng"
               className="text-input"
               value={draft.worldLng}
-              onChange={(event) => setDraft((state) => ({ ...state, worldLng: event.currentTarget.value }))}
+              onChange={(event) => {
+                const { value } = event.currentTarget;
+                setDraft((state) => ({ ...state, worldLng: value }));
+              }}
               placeholder="-97.7458"
             />
           </div>

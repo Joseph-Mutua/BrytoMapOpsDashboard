@@ -11,7 +11,10 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@turf/turf": "^7.2.0",
+    "@turf/boolean-valid": "^7.2.0",
+    "@turf/distance": "^7.2.0",
+    "@turf/helpers": "^7.2.0",
+    "@turf/kinks": "^7.2.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.2",

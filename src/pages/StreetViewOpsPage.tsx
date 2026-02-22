@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Button, Card, CardHeader } from '@/components/ui';
 import { useCommunityRecord } from '@/hooks';
 import { useSelectedCommunityId } from '@/store';
@@ -79,15 +79,11 @@ export function StreetViewOpsPage() {
   const plannedPercent = totalLength === 0 ? 0 : (plannedLength / totalLength) * 100;
   const gaps = plannedSegments.filter((segment) => !segment.covered);
 
-  const routeHeatCells = useMemo(
-    () =>
-      plannedSegments.map((segment) => ({
-        id: segment.id,
-        label: segment.roadName,
-        status: (segment.covered ? 'covered' : segment.plannedDrive ? 'planned' : 'gap') as HeatCellState,
-      })),
-    [plannedSegments],
-  );
+  const routeHeatCells = plannedSegments.map((segment) => ({
+    id: segment.id,
+    label: segment.roadName,
+    status: (segment.covered ? 'covered' : segment.plannedDrive ? 'planned' : 'gap') as HeatCellState,
+  }));
 
   const latestBatch = record.publishingBatches[0] ?? null;
   const metadataReady = metadataOverride ?? latestBatch?.metadataComplete ?? false;

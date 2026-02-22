@@ -1,4 +1,7 @@
-import { booleanValid, distance, kinks, lineString, point, polygon } from '@turf/turf';
+import booleanValid from '@turf/boolean-valid';
+import distance from '@turf/distance';
+import kinks from '@turf/kinks';
+import { lineString, point, polygon } from '@turf/helpers';
 import type { GeoPreviewSnapshot, GeometryValidationIssue, PlatControlPoint } from '@/domain/types';
 
 interface GeometryValidationInput {

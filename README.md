@@ -1,11 +1,9 @@
-# Bryto Community MapOps Dashboard
+# Community MapOps Dashboard
 
 A React + TypeScript + Vite prototype for Bryto's self-serve customer portal that combines:
 
 - `MapOps` (plat intake, georeference preview, map health detection, submission packaging)
 - `StreetView Ops` (route planning, coverage visibility, publishing status tracking)
-
-This project was built in a separate folder from `OrbitAtlas` and intentionally mirrors its design language and engineering patterns while adapting them to Bryto's operational workflow.
 
 
 ## Feature Modules
@@ -59,10 +57,3 @@ This project was built in a separate folder from `OrbitAtlas` and intentionally 
 - App-level `ErrorBoundary`
 - Route focus management + skip link
 - Deterministic format utilities and targeted unit tests
-
-## Verification (Final Pass)
-
-Verified locally after a clean dependency reinstall:
-
-- `npm test` -> `5` test files passed (`13` tests)
-- `npm run build` -> success (Vite production build)
