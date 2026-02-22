@@ -610,6 +610,10 @@ a {
   min-width: 0;
 }
 
+.nested-card {
+  margin-top: 1rem;
+}
+
 .version-list {
   list-style: none;
   margin: 0;
@@ -647,6 +651,41 @@ a {
 .status-flow {
   display: grid;
   gap: 0.55rem;
+}
+
+.segment-heatmap {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.segment-heatmap__cell {
+  border-radius: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  min-height: 4.5rem;
+  padding: 0.8rem;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.segment-heatmap__cell span {
+  font-weight: 600;
+}
+
+.segment-heatmap__cell--covered {
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.92), rgba(220, 252, 231, 0.8));
+  border-color: rgba(34, 197, 94, 0.18);
+}
+
+.segment-heatmap__cell--planned {
+  background: linear-gradient(180deg, rgba(240, 249, 255, 0.92), rgba(224, 242, 254, 0.8));
+  border-color: rgba(14, 165, 233, 0.18);
+}
+
+.segment-heatmap__cell--gap {
+  background: linear-gradient(180deg, rgba(255, 251, 235, 0.94), rgba(254, 243, 199, 0.8));
+  border-color: rgba(245, 158, 11, 0.2);
 }
 
 .diff-grid {
@@ -1080,6 +1119,10 @@ a {
   }
 
   .diff-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .segment-heatmap {
     grid-template-columns: 1fr;
   }
 }
