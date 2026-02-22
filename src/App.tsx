@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { RouteFocusManager } from '@/components/a11y/RouteFocusManager';
 import { AppLayout } from '@/layouts/AppLayout';
 import { DashboardHomePage } from '@/pages/DashboardHomePage';
 import { IntakePage } from '@/pages/IntakePage';
@@ -8,15 +10,18 @@ import { StreetViewOpsPage } from '@/pages/StreetViewOpsPage';
 
 export function App() {
   return (
-    <Routes>
-      <Route element={<AppLayout />}>
-        <Route index element={<DashboardHomePage />} />
-        <Route path="/intake" element={<IntakePage />} />
-        <Route path="/map-health" element={<MapHealthPage />} />
-        <Route path="/submissions" element={<SubmissionsPage />} />
-        <Route path="/streetview-ops" element={<StreetViewOpsPage />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <ErrorBoundary>
+      <RouteFocusManager />
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route index element={<DashboardHomePage />} />
+          <Route path="/intake" element={<IntakePage />} />
+          <Route path="/map-health" element={<MapHealthPage />} />
+          <Route path="/submissions" element={<SubmissionsPage />} />
+          <Route path="/streetview-ops" element={<StreetViewOpsPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </ErrorBoundary>
   );
 }

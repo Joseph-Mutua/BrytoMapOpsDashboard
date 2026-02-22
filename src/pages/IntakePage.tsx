@@ -88,8 +88,13 @@ export function IntakePage() {
                 setNearestAddressOverride(record.summary.id, event.currentTarget.value)
               }
               placeholder="e.g. 1458 Cedar View Dr, Georgetown, TX"
+              aria-invalid={nearestAddressError ? 'true' : 'false'}
+              aria-describedby="nearest-address-help"
             />
-            <p className={nearestAddressError ? 'field-help field-help--error' : 'field-help'}>
+            <p
+              id="nearest-address-help"
+              className={nearestAddressError ? 'field-help field-help--error' : 'field-help'}
+            >
               {nearestAddressError?.message ??
                 'Used by Bryto ops to anchor plat-to-geo conversion and validate map submissions.'}
             </p>
@@ -112,6 +117,8 @@ export function IntakePage() {
                   })
                 }
                 placeholder="30.6852"
+                aria-invalid={coordinatesError ? 'true' : 'false'}
+                aria-describedby="seed-coordinates-help"
               />
             </div>
 
@@ -131,11 +138,16 @@ export function IntakePage() {
                   })
                 }
                 placeholder="-97.7442"
+                aria-invalid={coordinatesError ? 'true' : 'false'}
+                aria-describedby="seed-coordinates-help"
               />
             </div>
           </div>
 
-          <p className={coordinatesError ? 'field-help field-help--error' : 'field-help'}>
+          <p
+            id="seed-coordinates-help"
+            className={coordinatesError ? 'field-help field-help--error' : 'field-help'}
+          >
             {coordinatesError?.message ??
               'Bryto commonly requests nearest coordinates; these seed the georeference preview step.'}
           </p>
@@ -178,7 +190,7 @@ export function IntakePage() {
           ) : null}
 
           {record.intakeDraft.attachments.length === 0 ? (
-            <p className="muted">No uploaded attachments yet.</p>
+            <p className="muted" role="status">No uploaded attachments yet.</p>
           ) : (
             <ul className="list-stack">
               {record.intakeDraft.attachments.map((attachment) => (
@@ -186,7 +198,7 @@ export function IntakePage() {
                   <span>
                     <strong>{attachment.filename}</strong>
                     <span className="list-row__meta">
-                      {attachment.kind} · {formatUtcDateTime(attachment.uploadedAtIso)} UTC
+                      {attachment.kind} | {formatUtcDateTime(attachment.uploadedAtIso)} UTC
                     </span>
                   </span>
                   <span className="list-row__meta">{formatBytes(attachment.sizeBytes)}</span>
@@ -201,7 +213,7 @@ export function IntakePage() {
             title="Readiness Checklist"
             subtitle="Intake completeness before georeference control-point mapping."
           />
-          <ul className="checklist">
+          <ul className="checklist" aria-label="Intake readiness checklist">
             <li className={draft.nearestAddress.trim().length >= 8 ? 'checklist__item checklist__item--done' : 'checklist__item'}>
               Anchor address provided
             </li>
@@ -215,8 +227,8 @@ export function IntakePage() {
               Orthophoto / evidence attached
             </li>
           </ul>
-          <p className="field-help">
-            Next commit adds the control-point editor and the georeferenced geometry preview.
+          <p className="field-help" role="status">
+            Georeference controls and preview are available below; complete these checks before packaging.
           </p>
         </Card>
       </div>

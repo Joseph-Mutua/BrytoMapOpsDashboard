@@ -219,7 +219,7 @@ export function GeoreferenceEditor({
         </div>
 
         {draftInvalid ? (
-          <p className="field-help field-help--error">
+          <p className="field-help field-help--error" role="alert">
             All control-point fields are required and must be numeric where applicable.
           </p>
         ) : null}
@@ -232,7 +232,7 @@ export function GeoreferenceEditor({
         </div>
 
         {controlPoints.length === 0 ? (
-          <p className="muted">No control points added yet.</p>
+          <p className="muted" role="status">No control points added yet.</p>
         ) : (
           <ul className="list-stack">
             {controlPoints.map((point) => (
@@ -329,7 +329,11 @@ export function GeoreferenceEditor({
               </li>
             ))}
           </ul>
-        ) : null}
+        ) : (
+          <p className="field-help" role="status">
+            No current validation issues detected in the preview.
+          </p>
+        )}
       </Card>
     </div>
   );
