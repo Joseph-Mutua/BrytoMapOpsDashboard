@@ -16,6 +16,11 @@ function navClassName(isActive: boolean): string {
 export function AppLayout() {
   return (
     <div className="app-shell">
+      <div className="app-backdrop" aria-hidden="true">
+        <div className="app-backdrop__mesh" />
+        <div className="app-backdrop__orb app-backdrop__orb--north" />
+        <div className="app-backdrop__orb app-backdrop__orb--east" />
+      </div>
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
