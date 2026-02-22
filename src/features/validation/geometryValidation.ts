@@ -152,7 +152,7 @@ export function validateGeometryDraft({
     if ((endpointCounts.get(key) ?? 0) > 1) return;
 
     let nearestGapFeet: number | null = null;
-    let nearestRoad: EndpointRef | null = null;
+    let nearestRoadName: string | null = null;
 
     endpoints.forEach((otherEndpoint) => {
       if (otherEndpoint.roadId === endpoint.roadId) return;
@@ -163,18 +163,18 @@ export function validateGeometryDraft({
       if (feet < 1 || feet > 40) return;
       if (nearestGapFeet == null || feet < nearestGapFeet) {
         nearestGapFeet = feet;
-        nearestRoad = otherEndpoint;
+        nearestRoadName = otherEndpoint.roadName;
       }
     });
 
-    if (nearestGapFeet != null && nearestRoad) {
+    if (nearestGapFeet != null && nearestRoadName != null) {
       issues.push(
         createIssue(
           {
             severity: 'warning',
             code: 'road_gap',
             featureId: endpoint.roadId,
-            message: `${endpoint.roadName} endpoint is ${Math.round(nearestGapFeet)} ft from ${nearestRoad.roadName}; consider snapping for connectivity.`,
+            message: `${endpoint.roadName} endpoint is ${Math.round(nearestGapFeet)} ft from ${nearestRoadName}; consider snapping for connectivity.`,
           },
           issues.length,
         ),

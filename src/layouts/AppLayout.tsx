@@ -2,13 +2,13 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { CommunityScopeCard } from '@/components/community/CommunityScopeCard';
 import { Card } from '@/components/ui';
 
-const NAV_ITEMS = [
+const NAV_ITEMS: ReadonlyArray<{ to: string; label: string; end?: boolean }> = [
   { to: '/', label: 'Overview', end: true },
   { to: '/intake', label: 'Intake + Geo' },
   { to: '/map-health', label: 'Map Health' },
   { to: '/submissions', label: 'Submissions' },
   { to: '/streetview-ops', label: 'StreetView Ops' },
-] as const;
+];
 
 function navClassName(isActive: boolean): string {
   return ['app-nav__link', isActive ? 'app-nav__link--active' : ''].filter(Boolean).join(' ');
