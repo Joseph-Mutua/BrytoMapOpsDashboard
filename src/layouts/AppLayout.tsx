@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { CommunityScopeCard } from '@/components/community/CommunityScopeCard';
 import { Card } from '@/components/ui';
 
 const NAV_ITEMS = [
@@ -37,6 +38,7 @@ export function AppLayout() {
 
       <div className="app-body">
         <aside className="app-sidebar" aria-label="Primary navigation">
+          <CommunityScopeCard />
           <Card>
             <nav className="app-nav">
               {NAV_ITEMS.map((item) => (
