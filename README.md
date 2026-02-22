@@ -7,36 +7,6 @@ A React + TypeScript + Vite prototype for Bryto's self-serve customer portal tha
 
 This project was built in a separate folder from `OrbitAtlas` and intentionally mirrors its design language and engineering patterns while adapting them to Bryto's operational workflow.
 
-## OrbitAtlas Analysis (Design + Engineering Language)
-
-### Visual language observed in `OrbitAtlas`
-
-From `OrbitAtlas/apps/explorer` and `OrbitAtlas/apps/backoffice`:
-
-- Typography pair: `DM Sans` (body/UI) + `Outfit` (display headings)
-- Color system: neutral `slate` scale with `sky` accent for active/primary actions
-- Surfaces: white cards/panels with soft borders (`slate-200`) and small shadows
-- Layout style: strong shell framing (header/sidebar/content), clear panel separation
-- Negative space: generous spacing, readable component grouping, low visual noise
-- Motion: subtle only, with explicit `prefers-reduced-motion` support
-- Accessibility defaults: skip link, semantic sections, keyboardable controls, focus rings
-
-### Engineering patterns observed in `OrbitAtlas`
-
-- Clear module boundaries (`components`, `hooks`, `store`, `utils`, `viewer`)
-- Abort-safe data hooks with explicit `idle/loading/success/error` states
-- Deterministic formatting helpers with unit tests
-- Domain/state logic outside JSX where possible
-- Reusable UI primitives (`Card`, `Button`) with stable APIs
-
-## How This Project Reuses That Language (Without Copying the Product)
-
-This app keeps OrbitAtlas's clean slate/sky DNA and panel-driven composition, but shifts the expression toward a more "operations console" feel:
-
-- Glass-tinted panels + subtle background mesh/orbs for higher visual identity
-- Same typography family pairing (`DM Sans` + `Outfit`) for continuity
-- Similar card/button semantics, status badges, and sidebar app shell
-- Stronger workflow visualization for ops states (timelines, diff views, readiness checks)
 
 ## Feature Modules
 
