@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button, Card, CardHeader } from '@/components/ui';
 import type { CommunityMapOpsRecord, PlatControlPoint } from '@/domain/types';
+import { validateGeometryDraft } from '@/features/validation';
 import { formatNumber } from '@/utils/format';
 
 interface GeoreferenceEditorProps {
@@ -91,8 +92,16 @@ export function GeoreferenceEditor({
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const normalizedPoints = useMemo(() => normalizePoints(controlPoints), [controlPoints]);
   const canGeneratePreview = controlPoints.length >= 3;
-  const previewIssues = record.validationIssues.filter((issue) =>
-    ['insufficient_control_points', 'road_gap'].includes(issue.code),
+  const computedIssues = useMemo(
+    () =>
+      validateGeometryDraft({
+        preview: record.geoPreview,
+        controlPoints,
+      }),
+    [controlPoints, record.geoPreview],
+  );
+  const previewIssues = computedIssues.filter((issue) =>
+    ['insufficient_control_points', 'road_gap', 'invalid_polygon', 'self_intersection', 'duplicate_address'].includes(issue.code),
   );
 
   function handleAddControlPoint() {
@@ -289,8 +298,8 @@ export function GeoreferenceEditor({
               <strong>{formatNumber(record.geoPreview.lots.length)}</strong>
             </div>
             <div className="detail-chip">
-              <span>Address points</span>
-              <strong>{formatNumber(record.geoPreview.addressPoints.length)}</strong>
+              <span>Validation issues</span>
+              <strong>{formatNumber(previewIssues.length)}</strong>
             </div>
           </div>
         </div>
@@ -312,7 +321,9 @@ export function GeoreferenceEditor({
             {previewIssues.map((issue) => (
               <li key={issue.id} className="list-row">
                 <span>
-                  <strong>{issue.code.replace(/_/g, ' ')}</strong>
+                  <strong>
+                    {issue.severity.toUpperCase()} · {issue.code.replace(/_/g, ' ')}
+                  </strong>
                   <span className="list-row__meta">{issue.message}</span>
                 </span>
               </li>
