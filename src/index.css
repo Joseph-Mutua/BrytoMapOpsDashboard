@@ -688,6 +688,30 @@ a {
   border-color: rgba(245, 158, 11, 0.2);
 }
 
+.publishing-batch-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.publishing-batch-list__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(255, 255, 255, 0.56);
+  padding: 0.65rem 0.75rem;
+}
+
+.publishing-batch-list__title {
+  margin: 0;
+  font-weight: 700;
+}
+
 .diff-grid {
   margin-top: 0.8rem;
   display: grid;
@@ -918,6 +942,22 @@ a {
   border-color: rgba(14, 165, 233, 0.2);
 }
 
+.status-badge--uploaded {
+  background: rgba(224, 242, 254, 0.85);
+  color: #0c4a6e;
+}
+
+.status-badge--processing {
+  background: rgba(255, 251, 235, 0.9);
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.18);
+}
+
+.status-badge--failed {
+  background: rgba(254, 226, 226, 0.9);
+  color: #991b1b;
+}
+
 .status-badge--accepted {
   background: rgba(220, 252, 231, 0.85);
   color: #166534;
@@ -1124,6 +1164,11 @@ a {
 
   .segment-heatmap {
     grid-template-columns: 1fr;
+  }
+
+  .publishing-batch-list__item {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
